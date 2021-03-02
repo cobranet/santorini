@@ -1,4 +1,5 @@
 from newsant import NewSant
+from newsant import SantMove
 import random
 class Node:
     def __init__(self,sant):
@@ -15,11 +16,16 @@ class Node:
                 return -1000000
             else:
                 return 1000000
-        wm = len(self.sant.possible_walks(0))+len(self.sant.possible_walks(1))
-        bm = len(self.sant.possible_walks(2))+len(self.sant.possible_walks(3))
-        hw = self.sant.table[self.sant.workers[0]]+self.sant.table[self.sant.workers[1]]
-        hb = self.sant.table[self.sant.workers[2]]+self.sant.table[self.sant.workers[3]]
-        return wm + 4*hw - bm - 4*hb+random.randint(-5,5)
+        scor = 0
+        for k in self.sant.possible_walks(0):
+            scor = scor + self.sant.table[k]
+        for k in self.sant.possible_walks(1):
+            scor = scor + self.sant.table[k]
+        for k in self.sant.possible_walks(2):
+            scor = scor - self.sant.table[k]
+        for k in self.sant.possible_walks(3):
+            scor = scor - self.sant.table[k]
+        return scor
     def getChildrens(self):
         games=[]
         for move in self.sant.possible_moves():
@@ -82,49 +88,74 @@ def alphabeta(node, depth,alpha,beta,maximizingPlayer):
         return (bn,bv)
     
     
-def test_min():
-    s=NewSant()
+def is_valid_move(sant,move):
+    for poss in sant.possible_moves():
+        if (poss.who == move.who and poss.move== move.move and poss.build ==poss.build):
+            return True
+    return False
+        
+
+def vsHuman():
+    s = NewSant()
     s.set_random_workers()
     n = Node(s)
-    print(s.white_on_move)
-    sc = minimax(n,3,True)
+    while(n.sant.winner == None):
+        moves = len(n.sant.moves)
+        if moves > 15:
+            depth = 3
+        else:
+            depth = 4
+        
+        if(n.sant.white_on_move):
+           # sc = minimax(n,3,True)
+            sc= alphabeta(n,depth,-100000000,10000000,True)
+        else:
+            print(n.sant)
+            valid = False
+            while(valid == False):
+                print('Please enter move !!')
+                who = int(input('Who? '));
+                move = int(input('Move? '));
+                build = int(input ('Build? ')); 
+                humanMove =SantMove(who,move,build)
+                valid = is_valid_move(n.sant, humanMove)
+                if(not valid):
+                    print('Invalid move')
+            n.sant.execute_move(humanMove)
+            sc = (n,0)
+            
+            
+        #    sc = minimax(n,3,False)
+        n = sc[0]    
+        print(sc[0].sant)
+        print(sc[1])
+        print('Moves {}'.format(len(sc[0].sant.moves)))
+        print( sc[0].sant.moves[-1])
     
-    print(sc[0].sant)
-    print(sc[1])
-    for move in sc[0].sant.moves:
-        print(move)
-
-    sc = minimax(sc[0],3,False)
-    print(sc[0].sant)
-    print(sc[1])
-    for move in sc[0].sant.moves:
-        print(move)
-
-    sc = minimax(sc[0],3,True)
-    print(sc[0].sant)
-    print(sc[1])
-    for move in sc[0].sant.moves:
-        print(move)
-
+        
 def kk():
     s=NewSant()
     s.set_random_workers()
     n = Node(s)
     while(n.sant.winner == None):
-        print(n.sant.winner)
+        moves = len(n.sant.moves)
+        if moves > 15:
+            depth = 3
+        else:
+            depth = 3
+        
         if(n.sant.white_on_move):
            # sc = minimax(n,3,True)
-            sc= alphabeta(n,3,-100000000,10000000,True)
+            sc= alphabeta(n,depth,-100000000,10000000,True)
         else:
-            sc=alphabeta(n,3,-100000000,100000000,False)
+            sc=alphabeta(n,depth,-100000000,100000000,False)
         #    sc = minimax(n,3,False)
         n = sc[0]    
         print(sc[0].sant)
         print(sc[1])
-        print ('Moves {}'.format(len(sc[0].sant.moves)))
-        for move in sc[0].sant.moves:
-            print(move)
+        print('Moves {}'.format(len(sc[0].sant.moves)))
+        print( sc[0].sant.moves[-1])
 
 
-
-kk()
+#kk()
+vsHuman()

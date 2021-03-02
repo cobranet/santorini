@@ -1,0 +1,132 @@
+    1: from newsant import NewSant
+    1: import random
+    2: class Node:
+    1:     def __init__(self,sant):
+82075:         self.sant = sant
+    1:     def is_end(self):
+ 2031:         if(self.sant.winner != None):
+    1:             return True
+               else:
+ 2030:             return False
+    1:     def score(self):
+13674:         if (self.sant.winner != None):
+       
+    7:             if(self.sant.winner == False):
+    5:                 return -1000000
+                   else:
+    2:                 return 1000000
+               #wm = len(self.sant.possible_walks(0))+len(self.sant.possible_walks(1))
+               #bm = len(self.sant.possible_walks(2))+len(self.sant.possible_walks(3))
+13667:         wm = 0
+13667:         bm = 0
+13667:         hw = self.sant.table[self.sant.workers[0]]+self.sant.table[self.sant.workers[1]]
+13667:         hb = self.sant.table[self.sant.workers[2]]+self.sant.table[self.sant.workers[3]]
+13667:         return wm + 8*hw - bm - 8*hb+random.randint(-3,3)
+    1:     def getChildrens(self):
+ 2030:         games=[]
+84104:         for move in self.sant.possible_moves():
+82074:             k = self.sant.copyMe()
+82074:             k.execute_move(move)
+82074:             games.append(Node(k))
+ 2030:         return games
+           
+    1: def minimax(node, depth, maximizingPlayer):
+           if depth == 0 or node.is_end():
+               return (node,node.score())
+           if maximizingPlayer == True:
+               bv = -100000000
+               bn = node
+               for child in node.getChildrens():
+                   n,value = minimax(child,depth-1,False)
+                   if (value > bv):
+                       bv = value
+                       bn = child
+               return (bn,bv)
+           else: 
+               bv = 100000000
+               bn = node
+               for child in node.getChildrens():
+                   n,value = minimax(child,depth-1,True)
+                   if(bv > value):
+                       bv = value
+                       bn = child
+               
+               return (bn,bv)
+       
+    1: def alphabeta(node, depth,alpha,beta,maximizingPlayer):
+15704:     if depth == 0 or node.is_end():
+13674:         return (node,node.score())
+ 2030:     if maximizingPlayer == True:
+ 1180:         bv = -100000000
+ 1180:         bn = node
+ 1180:         a= alpha
+ 8293:         for child in node.getChildrens():
+ 8188:             n,value = alphabeta(child,depth-1,a,beta,False)
+ 8188:             if (value > bv):
+ 2783:                 bv = value
+ 2783:                 bn = child
+ 8188:             a=max(a,bv)
+ 8188:             if(a >= beta):
+ 1075:                 break
+ 1180:         return (bn,bv)
+           else: 
+  850:         bv = 100000000
+  850:         bn = node
+  850:         b = beta
+ 7550:         for child in node.getChildrens():
+ 7441:             n,value = alphabeta(child,depth-1,alpha,b,True)
+ 7441:             if(bv > value):
+ 1871:                 bv = value
+ 1871:                 bn = child
+ 7441:             b = min(b,bv)
+ 7441:             if(b<=alpha):
+  741:                 break
+  850:         return (bn,bv)
+           
+           
+    1: def test_min():
+           s=NewSant()
+           s.set_random_workers()
+           n = Node(s)
+           print(s.white_on_move)
+           sc = minimax(n,3,True)
+           
+           print(sc[0].sant)
+           print(sc[1])
+           for move in sc[0].sant.moves:
+               print(move)
+       
+           sc = minimax(sc[0],3,False)
+           print(sc[0].sant)
+           print(sc[1])
+           for move in sc[0].sant.moves:
+               print(move)
+       
+           sc = minimax(sc[0],3,True)
+           print(sc[0].sant)
+           print(sc[1])
+           for move in sc[0].sant.moves:
+               print(move)
+       
+    1: def kk():
+    1:     s=NewSant()
+    1:     s.set_random_workers()
+    1:     n = Node(s)
+   76:     while(n.sant.winner == None):
+   75:         print(n.sant.winner)
+   75:         if(n.sant.white_on_move):
+                  # sc = minimax(n,3,True)
+   37:             sc= alphabeta(n,2,-100000000,10000000,True)
+               else:
+   38:             sc=alphabeta(n,2,-100000000,100000000,False)
+               #    sc = minimax(n,3,False)
+   75:         n = sc[0]    
+   75:         print(sc[0].sant)
+   75:         print(sc[1])
+   75:         print ('Moves {}'.format(len(sc[0].sant.moves)))
+ 2925:         for move in sc[0].sant.moves:
+ 2850:             print(move)
+       
+       
+       
+    1: kk()
