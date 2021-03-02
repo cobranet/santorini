@@ -1,0 +1,4 @@
+class NewSant:
+    def __init__(self):
+        self.pawns =[]
+        self.table = []
