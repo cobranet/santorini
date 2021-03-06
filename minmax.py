@@ -9,7 +9,13 @@ class Node:
             return True
         else:
             return False
-    def score(self):
+    def score(self,maximazingPlayer):
+        if(maximazingPlayer):
+            return self.score1()
+        else:
+            return self.score1()
+        
+    def score1(self):
         if (self.sant.winner != None):
 
             if(self.sant.winner == False):
@@ -18,7 +24,7 @@ class Node:
                 return 1000000
         scor = 0
         for k in self.sant.possible_walks(0):
-            scor = scor + self.sant.table[k]
+            scor = scor + self.sant.table[k] 
         for k in self.sant.possible_walks(1):
             scor = scor + self.sant.table[k]
         for k in self.sant.possible_walks(2):
@@ -26,6 +32,40 @@ class Node:
         for k in self.sant.possible_walks(3):
             scor = scor - self.sant.table[k]
         return scor
+    def score2(self):
+        if (self.sant.winner != None):
+
+            if(self.sant.winner == False):
+                return -1000000
+            else:
+                return 1000000
+        scor = 0
+        for k in self.sant.possible_walks(0):
+            scor = scor + self.sant.table[k]*self.sant.table[k]
+        for k in self.sant.possible_walks(1):
+            scor = scor + self.sant.table[k]*self.sant.table[k]
+        for k in self.sant.possible_walks(2):
+            scor = scor - self.sant.table[k]*self.sant.table[k]
+        for k in self.sant.possible_walks(3):
+            scor = scor - self.sant.table[k]*self.sant.table[k]
+        return scor
+
+    def score3(self):
+        if (self.sant.winner != None):
+
+            if(self.sant.winner == False):
+                return -1000000
+            else:
+                return 1000000
+        scor = 0
+        scor = scor + self.sant.table[self.sant.workers[0]]*self.sant.table[self.sant.workers[0]]
+        scor = scor + self.sant.table[self.sant.workers[1]]*self.sant.table[self.sant.workers[1]]
+        scor = scor - self.sant.table[self.sant.workers[2]]*self.sant.table[self.sant.workers[2]]
+        scor = scor - self.sant.table[self.sant.workers[3]]*self.sant.table[self.sant.workers[3]]
+        
+        return scor
+
+
     def getChildrens(self):
         games=[]
         for move in self.sant.possible_moves():
@@ -36,7 +76,7 @@ class Node:
     
 def minimax(node, depth, maximizingPlayer):
     if depth == 0 or node.is_end():
-        return (node,node.score())
+        return (node,node.score(maximizingPlayer))
     if maximizingPlayer == True:
         bv = -100000000
         bn = node
@@ -59,7 +99,7 @@ def minimax(node, depth, maximizingPlayer):
 
 def alphabeta(node, depth,alpha,beta,maximizingPlayer):
     if depth == 0 or node.is_end():
-        return (node,node.score())
+        return (node,node.score(maximizingPlayer))
     if maximizingPlayer == True:
         bv = -100000000
         bn = node
@@ -158,4 +198,4 @@ def kk():
 
 
 #kk()
-vsHuman()
+#vsHuman()

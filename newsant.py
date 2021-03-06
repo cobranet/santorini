@@ -71,7 +71,7 @@ class NewSant:
         points =[]
         worker_level = self.table[self.workers[worker]]
         for k in NewSant.cell_neighbors[self.workers[worker]]:
-            if self.is_empty(k) and self.table[k] <= worker_level+1:
+            if self.is_empty(k) and self.table[k] <= worker_level+1 and self.table[k]<4 : 
                 points.append(k)
         return points
 
